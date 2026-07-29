@@ -1,5 +1,6 @@
 export const getEligibleGames = (games, criteria) => {
   return games.filter(game => {
+    if (game.status !== 'want-to-play') return false;
     if (criteria.players) {
       if (criteria.players < game.minPlayers || criteria.players > game.maxPlayers) {
         return false;
@@ -22,10 +23,7 @@ export const getEligibleGames = (games, criteria) => {
   });
 };
 export const scoreGame = (game, recentPicks) => {
-  let score = 10; 
-  if (game.status === 'want-to-play') {
-    score += 15;
-  }
+  let score = 10;
   if (game.rating > 0) {
     score += (game.rating / 5) * 10;
   }
@@ -66,9 +64,7 @@ export const buildReasonText = (game, criteria) => {
   } else if (game.isFavorite) {
     reasons.push(`one of your favorites`);
   }
-  if (game.status === 'want-to-play') {
-    reasons.push(`still on your 'Want to Play' list`);
-  } else if (!game.lastPickedAt) {
+  if (!game.lastPickedAt) {
     reasons.push(`you haven't played this one in a while`);
   }
   if (reasons.length === 0) {

@@ -1,4 +1,4 @@
-const STORAGE_PREFIX = 'bgnp_';
+const STORAGE_PREFIX = "bgnp_";
 
 export const storage = {
   get(key, defaultValue = null) {
@@ -29,18 +29,18 @@ export const storage = {
       console.warn(`Error removing from localStorage: ${key}`, e);
     }
   },
-  
+
   clearAll() {
     try {
-      Object.keys(localStorage).forEach(key => {
+      Object.keys(localStorage).forEach((key) => {
         if (key.startsWith(STORAGE_PREFIX)) {
           localStorage.removeItem(key);
         }
       });
-    } catch(e) {
-      console.warn('Error clearing localStorage', e);
+    } catch (e) {
+      console.warn("Error clearing localStorage", e);
     }
-  }
+  },
 };
 
 export const debounce = (fn, delay) => {
