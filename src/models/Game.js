@@ -1,24 +1,21 @@
 import { generateId } from '../utils/storage.js';
-
 export const CATEGORIES = [
   'Strategy', 'Family', 'Party', 'Cooperative', 
   'Deck Building', 'Card Game', 'Dice', 'Abstract', 
   'Engine Builder', 'Worker Placement', 'Social Deduction', 
   'Quick Play', 'Heavy Strategy'
 ];
-
 export const createGame = (partialData = {}) => {
   const now = new Date().toISOString();
-  
   return {
     id: partialData.id || generateId(),
     name: partialData.name || '',
     minPlayers: partialData.minPlayers || 1,
     maxPlayers: partialData.maxPlayers || 1,
-    playTime: partialData.playTime || 30, // in minutes
-    rating: partialData.rating || 0, // 1-5
+    playTime: partialData.playTime || 30, 
+    rating: partialData.rating || 0, 
     categories: partialData.categories || [],
-    status: partialData.status || 'want-to-play', // 'want-to-play' | 'played'
+    status: partialData.status || 'want-to-play', 
     notes: partialData.notes || '',
     isFavorite: partialData.isFavorite || false,
     createdAt: partialData.createdAt || now,
@@ -28,8 +25,6 @@ export const createGame = (partialData = {}) => {
     ...partialData
   };
 };
-
-// Seed data
 export const getSeedGames = () => {
   return [
     createGame({ name: 'Catan', minPlayers: 3, maxPlayers: 4, playTime: 120, rating: 4, categories: ['Strategy', 'Family'], status: 'played' }),

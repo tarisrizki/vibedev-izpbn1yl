@@ -1,217 +1,188 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Board Game Night Planner</title>
-  
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
-  
-  <!-- CSS -->
-  <link rel="stylesheet" href="/src/styles/index.css" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Board Game Night Planner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/src/styles/index.css" />
 </head>
 <body data-theme="light">
-  
-  <div id="app">
-    <!-- Top Navigation -->
-    <header class="top-nav">
-      <div class="nav-left">
-        <i data-lucide="dice-5"></i>
-        <span class="logo-text">Board Game Night</span>
-      </div>
-      <div class="nav-right">
-        <button id="theme-toggle" class="icon-btn" aria-label="Toggle Theme">
-          <i data-lucide="moon" id="theme-icon"></i>
-        </button>
-        <div class="search-container">
-          <i data-lucide="search" class="search-icon"></i>
-          <input type="text" id="search-input" placeholder="Search games..." />
-        </div>
-        <button id="add-game-btn" class="btn btn-primary">
-          <i data-lucide="plus"></i> Add Game
-        </button>
-      </div>
-    </header>
-
-    <main class="container">
-      <!-- Hero Section -->
-      <section class="hero">
-        <div class="hero-content">
-          <h1>Plan Your Perfect Game Night</h1>
-          <p class="subtitle">Manage your collection, pick the right game, and roll the dice.</p>
-        </div>
-        <div class="stat-cards">
-          <div class="stat-card">
-            <div class="stat-icon"><i data-lucide="box"></i></div>
-            <div class="stat-info">
-              <span class="stat-label">Total Games</span>
-              <span class="stat-number" id="stat-total">0</span>
-            </div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-icon"><i data-lucide="check-circle"></i></div>
-            <div class="stat-info">
-              <span class="stat-label">Played</span>
-              <span class="stat-number" id="stat-played">0</span>
-            </div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-icon"><i data-lucide="clock"></i></div>
-            <div class="stat-info">
-              <span class="stat-label">Want to Play</span>
-              <span class="stat-number" id="stat-want">0</span>
-            </div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-icon"><i data-lucide="star"></i></div>
-            <div class="stat-info">
-              <span class="stat-label">Avg Rating</span>
-              <span class="stat-number" id="stat-rating">0.0</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Picker Section -->
-      <section class="picker-section" id="picker-section">
-        <div class="picker-container">
-          <h2>🎲 Pick Tonight's Game</h2>
-          <div class="picker-controls">
-            <div class="form-group">
-              <label for="pick-players">Players</label>
-              <input type="number" id="pick-players" min="1" placeholder="e.g. 4" />
-            </div>
-            <div class="form-group">
-              <label for="pick-max-time">Max Time (min)</label>
-              <input type="number" id="pick-max-time" min="1" placeholder="e.g. 120" />
-            </div>
-            <div class="form-group">
-              <label for="pick-min-rating">Min Rating</label>
-              <input type="number" id="pick-min-rating" min="1" max="5" step="0.1" placeholder="e.g. 4" />
-            </div>
-            <div class="form-group checkbox-group">
-              <input type="checkbox" id="pick-favorites" />
-              <label for="pick-favorites">Favorites Only</label>
-            </div>
-            <button id="roll-btn" class="btn btn-primary btn-large">Roll</button>
-          </div>
-          <div id="picker-result" class="picker-result hidden">
-            <!-- Animation and result will go here -->
-          </div>
-        </div>
-      </section>
-      
-      <!-- Filters and Collection -->
-      <section class="collection-section">
-        <div class="collection-header">
-          <h2>Your Collection</h2>
-          <div class="collection-actions">
-            <select id="sort-select" class="select-input">
-              <option value="name-asc">Name (A-Z)</option>
-              <option value="name-desc">Name (Z-A)</option>
-              <option value="rating-desc">Rating (High-Low)</option>
-              <option value="rating-asc">Rating (Low-High)</option>
-              <option value="time-asc">Time (Short-Long)</option>
-              <option value="time-desc">Time (Long-Short)</option>
-            </select>
-          </div>
-        </div>
-        
-        <div class="filter-chips" id="active-filters"></div>
-        
-        <div id="game-grid" class="game-grid">
-          <!-- Game cards will be rendered here -->
-        </div>
-        
-        <div id="empty-state" class="empty-state hidden">
-          <i data-lucide="package-open" class="empty-icon"></i>
-          <h3>No games found</h3>
-          <p>Try adjusting your filters or add a new game to your collection.</p>
-        </div>
-      </section>
-    </main>
-  </div>
-
-  <!-- Modal for Add/Edit Game -->
-  <div id="game-modal" class="modal hidden" role="dialog" aria-modal="true">
-    <div class="modal-backdrop"></div>
-    <div class="modal-content">
-      <h2 id="modal-title">Add Game</h2>
-      <form id="game-form">
-        <input type="hidden" id="form-id" />
-        
-        <div class="form-group">
-          <label for="form-name">Name *</label>
-          <input type="text" id="form-name" required />
-          <span class="error-msg" id="error-name"></span>
-        </div>
-        
-        <div class="form-row">
-          <div class="form-group">
-            <label for="form-min-players">Min Players *</label>
-            <input type="number" id="form-min-players" min="1" required />
-            <span class="error-msg" id="error-min-players"></span>
-          </div>
-          <div class="form-group">
-            <label for="form-max-players">Max Players *</label>
-            <input type="number" id="form-max-players" min="1" required />
-            <span class="error-msg" id="error-max-players"></span>
-          </div>
-        </div>
-        
-        <div class="form-row">
-          <div class="form-group">
-            <label for="form-play-time">Play Time (min) *</label>
-            <input type="number" id="form-play-time" min="1" required />
-            <span class="error-msg" id="error-play-time"></span>
-          </div>
-          <div class="form-group">
-            <label>Rating</label>
-            <div class="rating-input" id="form-rating-input">
-              <i data-lucide="star" data-val="1"></i>
-              <i data-lucide="star" data-val="2"></i>
-              <i data-lucide="star" data-val="3"></i>
-              <i data-lucide="star" data-val="4"></i>
-              <i data-lucide="star" data-val="5"></i>
-            </div>
-            <input type="hidden" id="form-rating" value="0" />
-          </div>
-        </div>
-        
-        <div class="form-group">
-          <label>Categories (Select up to 3)</label>
-          <div class="category-select" id="form-categories">
-            <!-- Rendered by JS -->
-          </div>
-        </div>
-        
-        <div class="form-group">
-          <label>Status</label>
-          <div class="segmented-control">
-            <input type="radio" id="status-want" name="form-status" value="want-to-play" checked />
-            <label for="status-want">Want to Play</label>
-            
-            <input type="radio" id="status-played" name="form-status" value="played" />
-            <label for="status-played">Played</label>
-          </div>
-        </div>
-        
-        <div class="form-group">
-          <label for="form-notes">Notes</label>
-          <textarea id="form-notes" rows="2"></textarea>
-        </div>
-        
-        <div class="modal-actions">
-          <button type="button" class="btn btn-secondary" id="cancel-game-btn">Cancel</button>
-          <button type="submit" class="btn btn-primary">Save Game</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <script type="module" src="/src/main.js"></script>
+<div id="app">
+<header class="top-nav">
+<div class="nav-left">
+<i data-lucide="dice-5"></i>
+<span class="logo-text">Board Game Night</span>
+</div>
+<div class="nav-right">
+<button id="theme-toggle" class="icon-btn" aria-label="Toggle Theme">
+<i data-lucide="moon" id="theme-icon"></i>
+</button>
+<div class="search-container">
+<i data-lucide="search" class="search-icon"></i>
+<input type="text" id="search-input" placeholder="Search games..." />
+</div>
+<button id="add-game-btn" class="btn btn-primary">
+<i data-lucide="plus"></i> Add Game
+</button>
+</div>
+</header>
+<main class="container">
+<section class="hero">
+<div class="hero-content">
+<h1>Plan Your Perfect Game Night</h1>
+<p class="subtitle">Manage your collection, pick the right game, and roll the dice.</p>
+</div>
+<div class="stat-cards">
+<div class="stat-card">
+<div class="stat-icon"><i data-lucide="box"></i></div>
+<div class="stat-info">
+<span class="stat-label">Total Games</span>
+<span class="stat-number" id="stat-total">0</span>
+</div>
+</div>
+<div class="stat-card">
+<div class="stat-icon"><i data-lucide="check-circle"></i></div>
+<div class="stat-info">
+<span class="stat-label">Played</span>
+<span class="stat-number" id="stat-played">0</span>
+</div>
+</div>
+<div class="stat-card">
+<div class="stat-icon"><i data-lucide="clock"></i></div>
+<div class="stat-info">
+<span class="stat-label">Want to Play</span>
+<span class="stat-number" id="stat-want">0</span>
+</div>
+</div>
+<div class="stat-card">
+<div class="stat-icon"><i data-lucide="star"></i></div>
+<div class="stat-info">
+<span class="stat-label">Avg Rating</span>
+<span class="stat-number" id="stat-rating">0.0</span>
+</div>
+</div>
+</div>
+</section>
+<section class="picker-section" id="picker-section">
+<div class="picker-container">
+<h2>🎲 Pick Tonight's Game</h2>
+<div class="picker-controls">
+<div class="form-group">
+<label for="pick-players">Players</label>
+<input type="number" id="pick-players" min="1" placeholder="e.g. 4" />
+</div>
+<div class="form-group">
+<label for="pick-max-time">Max Time (min)</label>
+<input type="number" id="pick-max-time" min="1" placeholder="e.g. 120" />
+</div>
+<div class="form-group">
+<label for="pick-min-rating">Min Rating</label>
+<input type="number" id="pick-min-rating" min="1" max="5" step="0.1" placeholder="e.g. 4" />
+</div>
+<div class="form-group checkbox-group">
+<input type="checkbox" id="pick-favorites" />
+<label for="pick-favorites">Favorites Only</label>
+</div>
+<button id="roll-btn" class="btn btn-primary btn-large">Roll</button>
+</div>
+<div id="picker-result" class="picker-result hidden">
+</div>
+</div>
+</section>
+<section class="collection-section">
+<div class="collection-header">
+<h2>Your Collection</h2>
+<div class="collection-actions">
+<select id="sort-select" class="select-input">
+<option value="name-asc">Name (A-Z)</option>
+<option value="name-desc">Name (Z-A)</option>
+<option value="rating-desc">Rating (High-Low)</option>
+<option value="rating-asc">Rating (Low-High)</option>
+<option value="time-asc">Time (Short-Long)</option>
+<option value="time-desc">Time (Long-Short)</option>
+</select>
+</div>
+</div>
+<div class="filter-chips" id="active-filters"></div>
+<div id="game-grid" class="game-grid">
+</div>
+<div id="empty-state" class="empty-state hidden">
+<i data-lucide="package-open" class="empty-icon"></i>
+<h3>No games found</h3>
+<p>Try adjusting your filters or add a new game to your collection.</p>
+</div>
+</section>
+</main>
+</div>
+<div id="game-modal" class="modal hidden" role="dialog" aria-modal="true">
+<div class="modal-backdrop"></div>
+<div class="modal-content">
+<h2 id="modal-title">Add Game</h2>
+<form id="game-form">
+<input type="hidden" id="form-id" />
+<div class="form-group">
+<label for="form-name">Name *</label>
+<input type="text" id="form-name" required />
+<span class="error-msg" id="error-name"></span>
+</div>
+<div class="form-row">
+<div class="form-group">
+<label for="form-min-players">Min Players *</label>
+<input type="number" id="form-min-players" min="1" required />
+<span class="error-msg" id="error-min-players"></span>
+</div>
+<div class="form-group">
+<label for="form-max-players">Max Players *</label>
+<input type="number" id="form-max-players" min="1" required />
+<span class="error-msg" id="error-max-players"></span>
+</div>
+</div>
+<div class="form-row">
+<div class="form-group">
+<label for="form-play-time">Play Time (min) *</label>
+<input type="number" id="form-play-time" min="1" required />
+<span class="error-msg" id="error-play-time"></span>
+</div>
+<div class="form-group">
+<label>Rating</label>
+<div class="rating-input" id="form-rating-input">
+<i data-lucide="star" data-val="1"></i>
+<i data-lucide="star" data-val="2"></i>
+<i data-lucide="star" data-val="3"></i>
+<i data-lucide="star" data-val="4"></i>
+<i data-lucide="star" data-val="5"></i>
+</div>
+<input type="hidden" id="form-rating" value="0" />
+</div>
+</div>
+<div class="form-group">
+<label>Categories (Select up to 3)</label>
+<div class="category-select" id="form-categories">
+</div>
+</div>
+<div class="form-group">
+<label>Status</label>
+<div class="segmented-control">
+<input type="radio" id="status-want" name="form-status" value="want-to-play" checked />
+<label for="status-want">Want to Play</label>
+<input type="radio" id="status-played" name="form-status" value="played" />
+<label for="status-played">Played</label>
+</div>
+</div>
+<div class="form-group">
+<label for="form-notes">Notes</label>
+<textarea id="form-notes" rows="2"></textarea>
+</div>
+<div class="modal-actions">
+<button type="button" class="btn btn-secondary" id="cancel-game-btn">Cancel</button>
+<button type="submit" class="btn btn-primary">Save Game</button>
+</div>
+</form>
+</div>
+</div>
+<script type="module" src="/src/main.js"></script>
 </body>
 </html>
