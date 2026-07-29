@@ -1,1 +1,55 @@
-export const getEligibleGames=(e,t)=>e.filter(e=>"want-to-play"===e.status&&((!t.players||!(t.players<e.minPlayers||t.players>e.maxPlayers))&&(!(t.maxPlayTime&&e.playTime>t.maxPlayTime)&&(!(t.minRating&&e.rating<t.minRating)&&!(t.favoritesOnly&&!e.isFavorite)))));export const scoreGame=(e,t)=>{let a=10;if(e.rating>0&&(a+=e.rating/5*10),e.lastPickedAt){const t=(new Date-new Date(e.lastPickedAt))/864e5;a+=Math.min(t,15)}else a+=20;const i=t.indexOf(e.id);if(-1!==i){a-=5*(10-i)}return e.isFavorite&&(a+=5),Math.max(a,1)};export const weightedRandomPick=e=>{const t=e.reduce((e,t)=>e+t.score,0);let a=Math.random()*t;for(const t of e){if(a<t.score)return t.game;a-=t.score}return e[0].game};export const buildReasonText=(e,t)=>{const a=[];if(t.players&&e.minPlayers<=t.players&&e.maxPlayers>=t.players&&a.push(`perfect for ${t.players} players`),e.rating>=4?a.push(`highly rated (${e.rating}/5)`):e.isFavorite&&a.push("one of your favorites"),e.lastPickedAt||a.push("you haven't played this one in a while"),0===a.length)return"A solid choice for tonight's game night!";if(1===a.length)return`Selected because it is ${a[0]}.`;const i=a.pop();return`Selected because it is ${a.join(", ")}, and ${i}.`};export const pickTonightGame=(e,t,a)=>{const i=getEligibleGames(e,t);if(0===i.length)return null;const r=i.map(e=>({game:e,score:scoreGame(e,a)})),s=weightedRandomPick(r);return{game:s,reason:buildReasonText(s,t)}};
+export const getEligibleGames = (e, t) =>
+  e.filter(
+    (e) =>
+      "want-to-play" === e.status &&
+      (!t.players || !(t.players < e.minPlayers || t.players > e.maxPlayers)) &&
+      !(t.maxPlayTime && e.playTime > t.maxPlayTime) &&
+      !(t.minRating && e.rating < t.minRating) &&
+      !(t.favoritesOnly && !e.isFavorite),
+  );
+export const scoreGame = (e, t) => {
+  let a = 10;
+  if ((e.rating > 0 && (a += (e.rating / 5) * 10), e.lastPickedAt)) {
+    const t = (new Date() - new Date(e.lastPickedAt)) / 864e5;
+    a += Math.min(t, 15);
+  } else a += 20;
+  const i = t.indexOf(e.id);
+  if (-1 !== i) {
+    a -= 5 * (10 - i);
+  }
+  return (e.isFavorite && (a += 5), Math.max(a, 1));
+};
+export const weightedRandomPick = (e) => {
+  const t = e.reduce((e, t) => e + t.score, 0);
+  let a = Math.random() * t;
+  for (const t of e) {
+    if (a < t.score) return t.game;
+    a -= t.score;
+  }
+  return e[0].game;
+};
+export const buildReasonText = (e, t) => {
+  const a = [];
+  if (
+    (t.players &&
+      e.minPlayers <= t.players &&
+      e.maxPlayers >= t.players &&
+      a.push(`perfect for ${t.players} players`),
+    e.rating >= 4
+      ? a.push(`highly rated (${e.rating}/5)`)
+      : e.isFavorite && a.push("one of your favorites"),
+    e.lastPickedAt || a.push("you haven't played this one in a while"),
+    0 === a.length)
+  )
+    return "A solid choice for tonight's game night!";
+  if (1 === a.length) return `Selected because it is ${a[0]}.`;
+  const i = a.pop();
+  return `Selected because it is ${a.join(", ")}, and ${i}.`;
+};
+export const pickTonightGame = (e, t, a) => {
+  const i = getEligibleGames(e, t);
+  if (0 === i.length) return null;
+  const r = i.map((e) => ({ game: e, score: scoreGame(e, a) })),
+    s = weightedRandomPick(r);
+  return { game: s, reason: buildReasonText(s, t) };
+};
