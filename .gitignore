@@ -1,0 +1,6 @@
+node_modules
+dist
+.env
+prd.md
+style.md
+task.md
